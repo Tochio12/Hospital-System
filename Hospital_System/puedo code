@@ -1,0 +1,68 @@
+BEGIN HospitalManagementSystem
+
+    DISPLAY LoginScreen
+    WHILE UserNotAuthenticated
+        GET UserCredentials
+        VALIDATE UserCredentials
+        IF AuthenticationFails THEN
+            DISPLAY ErrorMessage
+        ELSE
+            LOAD MainMenu
+        END IF
+    END WHILE
+
+    WHILE ApplicationIsRunning
+        DISPLAY MainMenu
+        GET UserSelection
+
+        SWITCH (UserSelection)
+            CASE "New Patient":
+                DISPLAY NewPatientForm
+                GET PatientDetails
+                SAVE PatientDetailsToDatabase
+                MARK RoomAsOccupied
+                DISPLAY SuccessMessage
+            END CASE
+
+            CASE "Discharge Patient":
+                DISPLAY PatientList
+                GET SelectedPatient
+                UPDATE RoomStatusToAvailable
+                DELETE PatientDetailsFromDatabase
+                DISPLAY DischargeSuccessMessage
+            END CASE
+
+            CASE "View Room Status":
+                FETCH RoomDetailsFromDatabase
+                DISPLAY RoomDetails
+            END CASE
+
+            CASE "Update Patient Info":
+                DISPLAY PatientList
+                GET SelectedPatient
+                DISPLAY UpdateForm
+                GET UpdatedDetails
+                SAVE UpdatedDetailsToDatabase
+                DISPLAY UpdateSuccessMessage
+            END CASE
+
+            CASE "View Employee Info":
+                FETCH EmployeeDetailsFromDatabase
+                DISPLAY EmployeeDetails
+            END CASE
+
+            CASE "View Patient Info":
+                FETCH PatientDetailsFromDatabase
+                DISPLAY PatientDetails
+            END CASE
+
+            CASE "Logout":
+                EXIT Application
+            END CASE
+
+            DEFAULT:
+                DISPLAY InvalidOptionMessage
+        END SWITCH
+    END WHILE
+
+END HospitalManagementSystem
